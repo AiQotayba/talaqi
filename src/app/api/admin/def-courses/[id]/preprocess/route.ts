@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import DefCourse from '@/models/DefCourse';
 import { extractCourseFromText } from '@/lib/gemini';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const { id } = await params;
     await connectToDatabase();
     const defCourse = await DefCourse.findById(id);

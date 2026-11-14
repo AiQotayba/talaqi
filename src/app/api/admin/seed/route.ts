@@ -5,7 +5,7 @@ import Organization from '@/models/Organization';
 import User from '@/models/User';
 import Slider from '@/models/Slider';
 import Section from '@/models/Section';
-import { hashPassword } from '@/lib/auth';
+import { hashPassword, authorizeAdmin } from '@/lib/auth';
 
 const SEED_ORGANIZATIONS = [
   {
@@ -855,6 +855,9 @@ const SEED_SECTIONS = [
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     await connectToDatabase();
 
     const orgMap: Record<string, any> = {};

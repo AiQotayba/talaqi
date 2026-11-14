@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import Course from '@/models/Course';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const { id } = await params;
     await connectToDatabase();
     const course = await Course.findById(id);
@@ -16,6 +20,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const { id } = await params;
     const body = await req.json();
     await connectToDatabase();
@@ -54,6 +61,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const { id } = await params;
     await connectToDatabase();
     const course = await Course.findByIdAndUpdate(id, { deleteState: true }, { new: true });

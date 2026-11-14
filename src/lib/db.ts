@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/dolean';
+const isProduction = process.env.NODE_ENV === 'production';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (isProduction && !MONGODB_URI) {
+  throw new Error('FATAL: MONGODB_URI environment variable is missing in production environment!');
+}
+
+const EFFECTIVE_URI = MONGODB_URI || 'mongodb://127.0.0.1:27017/dolean';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -33,12 +40,13 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
 
     cached.promise = (async () => {
       try {
-        const instance = await mongoose.connect(MONGODB_URI, opts);
+        const instance = await mongoose.connect(EFFECTIVE_URI, opts);
         console.log('✅ تم الاتصال بقاعدة بيانات MongoDB بنجاح.');
         return instance;
       } catch (err: any) {
-        if (MONGODB_URI !== LOCAL_FALLBACK_URI) {
-          console.warn('⚠️ فشل الاتصال بقاعدة البيانات السحابية (Atlas)، جاري الاتصال تلقائياً بالقاعدة المحلية...');
+        // Only in local non-production development do we attempt local fallback
+        if (!isProduction && EFFECTIVE_URI !== LOCAL_FALLBACK_URI) {
+          console.warn('⚠️ فشل الاتصال بقاعدة البيانات السحابية، جاري الاتصال تلقائياً بالقاعدة المحلية (بيئة تطوير)...');
           try {
             const fallbackInstance = await mongoose.connect(LOCAL_FALLBACK_URI, opts);
             console.log('✅ تم الاتصال بقاعدة بيانات MongoDB المحلية بنجاح.');
@@ -48,6 +56,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
             throw err;
           }
         }
+        console.error('❌ خطأ في الاتصال بقاعدة بيانات MongoDB:', err.message);
         throw err;
       }
     })();

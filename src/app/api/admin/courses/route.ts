@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import Course from '@/models/Course';
-import { getAuthUser } from '@/lib/auth';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     await connectToDatabase();
     const { searchParams } = new URL(req.url);
 
@@ -91,8 +94,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
+    const user = auth.user;
     const body = await req.json();
-    const user = await getAuthUser(req);
     await connectToDatabase();
 
     // 1. تنظيف وتأمين حقل الصورة لمنع أخطاء Cast to string (مثل كائن FileList { '0': {} })

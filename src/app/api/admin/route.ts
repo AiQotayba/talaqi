@@ -8,9 +8,13 @@ import DefCourse from '@/models/DefCourse';
 import Slider from '@/models/Slider';
 import Section from '@/models/Section';
 import Organization from '@/models/Organization';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     await connectToDatabase();
     const [users, userDetails, courses, defCourses, sliders, sections, organizations] = await Promise.all([
       User.countDocuments({ deleteState: { $ne: true } }),

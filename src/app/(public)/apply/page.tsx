@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import CountryPhoneInput, { isValidPhoneNumber } from '@/components/forms-client/CountryPhoneInput';
+import { ApplyFormSkeleton } from '@/components/ui/skeleton';
 
 // 4 مهارات رئيسية شائعة للاختيار التفاعلي المتعدد (حد أقصى 4 مقترحات تطبيقاً لفلسفة المنصة)
 const POPULAR_SKILLS = [
@@ -80,10 +81,18 @@ function ApplyForm() {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    const token = Cookies.get('authorization');
-    if (token && token.length > 10) {
-      setIsLoggedIn(true);
-    }
+    fetch('/api/auth')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && data?.user) {
+          setIsLoggedIn(true);
+          if (data.user.name && !fullName) setFullName(data.user.name);
+          if (data.user.phone && !phone) setPhone(data.user.phone);
+          if (data.user.email && !email) setEmail(data.user.email);
+        }
+      })
+      .catch(() => {});
+
     if (initialInterest) {
       if (POPULAR_SKILLS.includes(initialInterest)) {
         setSelectedSkills([initialInterest]);
@@ -592,7 +601,7 @@ function ApplyForm() {
 
 export default function ApplyPage() {
   return (
-    <Suspense fallback={<div className="py-20 text-center text-sm text-slate-400">جارٍ التحميل...</div>}>
+    <Suspense fallback={<ApplyFormSkeleton />}>
       <ApplyForm />
     </Suspense>
   );

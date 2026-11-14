@@ -33,15 +33,12 @@ const Login: React.FC = () => {
             });
             const res = await response.json();
 
-            if (!response.ok || !res?.token) {
+            if (!response.ok) {
                 setErrorMessage(res?.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
                 return;
             }
 
             const isAdmin = res?.isAdmin === true || res?.user?.role === 'admin' || res?.user?.roles?.includes('admin') || res?.user?.roles?.includes('super_admin');
-
-            Cookies.set('authorization', res.token, { expires: 7, path: '/' });
-            Cookies.set('isAdmin', isAdmin ? 'true' : 'false', { expires: 7, path: '/' });
 
             if (isAdmin) {
                 router.replace('/admin');

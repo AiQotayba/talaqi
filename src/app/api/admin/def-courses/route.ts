@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import DefCourse from '@/models/DefCourse';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     await connectToDatabase();
     const { searchParams } = new URL(req.url);
 
@@ -71,6 +75,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const body = await req.json();
     await connectToDatabase();
 

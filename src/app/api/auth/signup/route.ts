@@ -5,10 +5,14 @@ import { hashPassword, signToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, phone, password, role } = await req.json();
+    const { name, email, phone, password } = await req.json();
 
     if (!name || !email || !phone || !password) {
       return NextResponse.json({ message: 'جميع الحقول مطلوبة' }, { status: 400 });
+    }
+
+    if (typeof password !== 'string' || password.length < 8) {
+      return NextResponse.json({ message: 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' }, { status: 400 });
     }
 
     await connectToDatabase();
@@ -18,7 +22,8 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await hashPassword(password);
-    const initialRoles = role ? [role] : ['student'];
+    // Enforce student role on public signup - never trust role from request body
+    const initialRoles: ('student')[] = ['student'];
 
     const newUser = await User.create({
       name: name.trim(),
@@ -28,20 +33,17 @@ export async function POST(req: NextRequest) {
       roles: initialRoles,
     });
 
-    const primaryRole = initialRoles.includes('admin') ? 'admin' : 'user';
-
     const token = signToken({
       userId: newUser._id.toString(),
       email: newUser.email,
       roles: newUser.roles,
-      role: primaryRole,
+      role: 'user',
     });
 
     const response = NextResponse.json(
       {
         message: 'تم إنشاء الحساب بنجاح',
-        token,
-        isAdmin: primaryRole === 'admin',
+        isAdmin: false,
         user: {
           _id: newUser._id,
           name: newUser.name,
@@ -54,11 +56,17 @@ export async function POST(req: NextRequest) {
     );
 
     response.cookies.set('authorization', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    response.cookies.set('isAdmin', primaryRole === 'admin' ? 'true' : 'false', {
+    response.cookies.set('isAdmin', 'false', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
@@ -66,6 +74,6 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error: any) {
     console.error('Signup Error:', error);
-    return NextResponse.json({ message: error.message || 'حدث خطأ أثناء التسجيل' }, { status: 500 });
+    return NextResponse.json({ message: 'حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.' }, { status: 500 });
   }
 }

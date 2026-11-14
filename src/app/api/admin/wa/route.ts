@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import UserDetails from '@/models/UserDetails';
 import waSend from '@/lib/wa';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const { list, msg } = await req.json();
 
     if (!list || !Array.isArray(list) || list.length === 0) {

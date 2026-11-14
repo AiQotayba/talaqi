@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      token,
       isAdmin: primaryRole === 'admin',
       user: {
         _id: user._id,
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
     });
 
     response.cookies.set('authorization', token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
@@ -57,6 +56,9 @@ export async function POST(req: NextRequest) {
     });
 
     response.cookies.set('isAdmin', primaryRole === 'admin' ? 'true' : 'false', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
@@ -64,6 +66,6 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error: any) {
     console.error('Login Error:', error);
-    return NextResponse.json({ message: error.message || 'حدث خطأ في الخادم' }, { status: 500 });
+    return NextResponse.json({ message: 'حدث خطأ في الخادم أثناء تسجيل الدخول' }, { status: 500 });
   }
 }

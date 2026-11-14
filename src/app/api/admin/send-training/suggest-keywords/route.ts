@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { suggestTrainingKeywords } from '@/lib/gemini';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     const body = await req.json();
     const { title, summary, context } = body;
 

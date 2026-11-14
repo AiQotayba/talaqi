@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import UserDetails from '@/models/UserDetails';
+import { authorizeAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await authorizeAdmin(req);
+    if (!auth.authorized) return auth.response;
+
     await connectToDatabase();
     const { searchParams } = new URL(req.url);
 

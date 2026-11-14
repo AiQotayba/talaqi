@@ -28,12 +28,10 @@ const Signup: React.FC = () => {
         try {
             const url = '/api/auth/signup';
             const response = await axios.post(url, data);
-            if (response.data?.token) {
-                Cookies.set('authorization', response.data.token, { expires: 7, path: '/' });
-                Cookies.set('isAdmin', response.data.isAdmin ? 'true' : 'false', { expires: 7, path: '/' });
+            if (response.status === 200 || response.status === 201) {
                 router.push('/');
             } else {
-                setMessage(response.data?.message || 'تعذر استلام رمز الدخول.');
+                setMessage(response.data?.message || 'تعذر استكمال إنشاء الحساب.');
             }
         } catch (error: any) {
             console.error('حدث خطأ أثناء إنشاء الحساب:', error);

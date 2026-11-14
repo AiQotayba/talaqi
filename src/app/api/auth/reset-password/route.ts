@@ -23,11 +23,12 @@ export async function POST(req: NextRequest) {
       deleteState: false,
     });
 
+    // Security: Return uniform generic response whether the email exists or not to prevent account enumeration
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'البريد الإلكتروني غير مسجل لدينا' },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        success: true,
+        message: 'إذا كان البريد الإلكتروني مسجلاً، فسيتم إرسال رابط إعادة تعيين كلمة المرور.',
+      });
     }
 
     // إنشاء رمز إعادة التعيين وصلاحية لمدة ساعة
@@ -47,33 +48,31 @@ export async function POST(req: NextRequest) {
     const baseUrl = origin.startsWith('http') ? origin : `http://${origin}`;
     const resetUrl = `${baseUrl}/auth?route=newPassword&token=${resetToken}`;
 
-    console.log(`[AUTH] Reset Password URL generated for (${user.email}): ${resetUrl}`);
+    // Security: Do NOT log sensitive reset tokens or URLs in production logs
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[AUTH] Reset Password requested for: ${user.email}`);
+    }
 
     // إرسال عبر الواتساب في حال توفر رقم هاتف للمستخدم وخدمة الواتساب
     if (user.phone) {
-      console.log(
-        `مرحباً ${user.name}،\nلقد تلقينا طلباً لإعادة تعيين كلمة المرور لحسابك في منصة تلاقي.\nيمكنك تعيين كلمة مرور جديدة من خلال الرابط التالي:\n${resetUrl}\nصلاحية هذا الرابط ساعة واحدة فقط.`
-      );
-
       try {
         await waSend(
           user.phone,
           `مرحباً ${user.name}،\nلقد تلقينا طلباً لإعادة تعيين كلمة المرور لحسابك في منصة تلاقي.\nيمكنك تعيين كلمة مرور جديدة من خلال الرابط التالي:\n${resetUrl}\nصلاحية هذا الرابط ساعة واحدة فقط.`
         );
       } catch (waErr) {
-        console.warn('[AUTH] WhatsApp send skipped/failed:', waErr);
+        console.warn('[AUTH] WhatsApp send failed:', waErr);
       }
     }
 
     return NextResponse.json({
       success: true,
-      message: 'تم إرسال رابط إعادة تعيين كلمة المرور بنجاح',
-      resetUrl: process.env.NODE_ENV !== 'production' ? resetUrl : undefined,
+      message: 'إذا كان البريد الإلكتروني مسجلاً، فسيتم إرسال رابط إعادة تعيين كلمة المرور.',
     });
   } catch (error: any) {
     console.error('[AUTH] Reset Password Error:', error);
     return NextResponse.json(
-      { success: false, message: error.message || 'حدث خطأ في الخادم' },
+      { success: false, message: 'حدث خطأ في الخادم، يرجى المحاولة لاحقاً' },
       { status: 500 }
     );
   }

@@ -12,15 +12,29 @@ export default function Nav() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get("authorization");
+    // Check login state via public cookie or quick session check
     const isAdmin = Cookies.get("isAdmin");
-    if (token && token.length > 10) {
-      setIsLoggedIn(true);
-      setProfileHref(isAdmin === 'true' ? "/admin" : "/profile");
-    } else {
-      setIsLoggedIn(false);
-      setProfileHref("/auth?route=login");
-    }
+    fetch("/api/auth")
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error("unauthorized");
+      })
+      .then((data) => {
+        if (data?.success && data?.user) {
+          setIsLoggedIn(true);
+          const hasAdmin = isAdmin === "true" || data.user.roles?.includes("admin") || data.user.roles?.includes("super_admin");
+          setProfileHref(hasAdmin ? "/admin" : "/profile");
+        } else {
+          setIsLoggedIn(false);
+          setProfileHref("/auth?route=login");
+        }
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+        setProfileHref("/auth?route=login");
+      });
   }, []);
 
   return (

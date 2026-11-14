@@ -66,10 +66,17 @@ export default function HeroQuickRequest() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    const token = Cookies.get('authorization');
-    if (token && token.length > 10) {
-      setIsLoggedIn(true);
-    }
+    fetch('/api/auth')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && data?.user) {
+          setIsLoggedIn(true);
+          if (data.user.name && !fullName) setFullName(data.user.name);
+          if (data.user.phone && !phone) setPhone(data.user.phone);
+          if (data.user.email && !email) setEmail(data.user.email);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Toggle multi-select skill
