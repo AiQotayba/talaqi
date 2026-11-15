@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { useForm, FormProvider, SubmitHandler, Controller } from 'react-hook-form';
 import axios from 'axios';
 import FormField from '@/components/Element/FormField';
-import Cookies from 'js-cookie';
+import CountryPhoneInput, { isValidPhoneNumber } from '@/components/forms-client/CountryPhoneInput';
 import { useRouter } from 'next/navigation';
 
 interface SignupFormInputs {
@@ -17,14 +17,19 @@ interface SignupFormInputs {
 }
 
 const Signup: React.FC = () => {
-    const methods = useForm<SignupFormInputs>();
-    const { handleSubmit, watch } = methods;
+    const methods = useForm<SignupFormInputs>({
+        defaultValues: {
+            phone: '',
+        },
+    });
+    const { handleSubmit, watch, control } = methods;
     const [message, setMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
 
     const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
         setLoading(true);
+        setMessage(null);
         try {
             const url = '/api/auth/signup';
             const response = await axios.post(url, data);
@@ -64,13 +69,41 @@ const Signup: React.FC = () => {
                         validation={{ required: 'الاسم مطلوب' }}
                     />
 
-                    <FormField
-                        label="رقم الهاتف"
-                        name="phone"
-                        type="tel"
-                        placeholder="رقم هاتفك"
-                        validation={{ required: 'رقم الهاتف مطلوب' }}
-                    />
+                    <div className="space-y-2 my-4">
+                        <label htmlFor="signup-phone" className="text-lg font-medium leading-none block">
+                            رقم الهاتف <span className="text-red-500">*</span>
+                        </label>
+                        <Controller
+                            name="phone"
+                            control={control}
+                            rules={{
+                                required: 'رقم الهاتف مطلوب',
+                                validate: (value) => {
+                                    if (!value) return 'رقم الهاتف مطلوب';
+                                    if (!isValidPhoneNumber(value)) {
+                                        return 'يرجى إدخال رقم هاتف صحيح مع رمز الدولة';
+                                    }
+                                    return true;
+                                },
+                            }}
+                            render={({ field, fieldState }) => (
+                                <div>
+                                    <CountryPhoneInput
+                                        id="signup-phone"
+                                        value={field.value || ''}
+                                        onChange={field.onChange}
+                                        required
+                                        className={fieldState.error ? 'ring-2 ring-red-500 rounded-2xl' : ''}
+                                    />
+                                    {fieldState.error && (
+                                        <p className="text-red-500 text-xs mt-1 font-bold">
+                                            {fieldState.error.message}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        />
+                    </div>
 
                     <FormField
                         label="البريد الإلكتروني"
