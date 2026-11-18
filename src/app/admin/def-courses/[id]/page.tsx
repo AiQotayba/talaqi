@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { Header } from '../../AdminHeader';
 import Link from 'next/link';
+import { SingleCoursePageSkeleton } from '@/components/ui/skeleton';
 
 export default function OneDefCourses() {
     const params = useParams();
@@ -37,7 +38,7 @@ export default function OneDefCourses() {
     };
 
     if (loading) {
-        return <div className="p-8 text-center text-gray-500">جاري التحميل...</div>;
+        return <SingleCoursePageSkeleton />;
     }
 
     if (!data) {

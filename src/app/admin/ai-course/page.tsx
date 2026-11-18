@@ -48,8 +48,12 @@ export default function AiCourse() {
   return (
     <Suspense
       fallback={
-        <div className="p-8 text-center text-slate-500 font-bold text-xs">
-          جاري تحميل واجهة الذكاء الاصطناعي...
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+          <div className="h-16 bg-white rounded-2xl border border-slate-200/90 p-4 animate-pulse" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-6 h-96 bg-white rounded-3xl border border-slate-200/90 p-6 animate-pulse" />
+            <div className="lg:col-span-6 h-96 bg-white rounded-3xl border border-slate-200/90 p-6 animate-pulse" />
+          </div>
         </div>
       }
     >

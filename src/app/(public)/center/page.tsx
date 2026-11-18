@@ -4,6 +4,7 @@ import { connectToDatabase } from '@/lib/db';
 import Organization from '@/models/Organization';
 import Course from '@/models/Course';
 import CentersDirectory, { CenterItem } from '@/components/centers/CentersDirectory';
+import { CentersSkeletonGrid, Skeleton } from '@/components/ui/skeleton';
 
 export const metadata: Metadata = {
   title: 'المراكز والمعاهد التدريبية الشريكة | تلاقي',
@@ -63,13 +64,13 @@ export default function CentersPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full max-w-6xl mx-auto px-4 py-16 text-center">
-          <div className="h-44 w-full bg-slate-200/70 rounded-3xl animate-pulse mb-8" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="h-64 bg-slate-200/60 rounded-2xl animate-pulse" />
-            <div className="h-64 bg-slate-200/60 rounded-2xl animate-pulse" />
-            <div className="h-64 bg-slate-200/60 rounded-2xl animate-pulse" />
+        <div className="w-full max-w-6xl mx-auto px-4 py-8 space-y-6">
+          <div className="bg-[#123D3A] rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden">
+            <Skeleton className="h-6 w-36 bg-white/20 rounded-full mb-3" />
+            <Skeleton className="h-8 w-64 bg-white/20 rounded-xl mb-2" />
+            <Skeleton className="h-4 w-96 max-w-full bg-white/10 rounded-md" />
           </div>
+          <CentersSkeletonGrid count={6} />
         </div>
       }
     >

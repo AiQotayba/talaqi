@@ -56,6 +56,15 @@ export default async function AdminCentersPage() {
       <Header
         title="دليل المراكز والمنظمات التدريبية بإدلب"
         subtitle="إدارة الشركاء المعتمدين والمؤسسات التي تقدم الدورات والفرص المهنية للطلاب في إدلب والشمال السوري"
+        action={
+          <Link
+            href="?newCenter=true"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#123D3A] hover:bg-[#0E2F2D] text-white text-xs font-bold transition shadow-xs"
+          >
+            <Plus className="w-4 h-4" />
+            <span>إضافة مركز / شريك جديد</span>
+          </Link>
+        }
       />
 
       {/* Summary Metrics */}
@@ -153,19 +162,27 @@ export default async function AdminCentersPage() {
                 </div>
               </CardContent>
 
-              {/* Card Footer with course counts */}
+              {/* Card Footer with course counts & Edit */}
               <div className="px-5 py-3 bg-slate-50/75 border-t border-slate-100 flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-600 flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5 text-[#D58A38]" />
-                  <span>{center.courseCount || 0} دورات وتدريبات مسجلة</span>
+                  <span>{center.courseCount || 0} دورات وتدريبات</span>
                 </span>
-                <Link
-                  href="/center"
-                  target="_blank"
-                  className="font-bold text-[#123D3A] hover:text-[#D58A38] transition"
-                >
-                  معاينة الملف العام
-                </Link>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`?centerId=${center._id.toString()}`}
+                    className="font-bold text-slate-700 hover:text-[#123D3A] transition"
+                  >
+                    تعديل البيانات
+                  </Link>
+                  <Link
+                    href="/center"
+                    target="_blank"
+                    className="font-bold text-[#123D3A] hover:text-[#D58A38] transition"
+                  >
+                    معاينة عامة
+                  </Link>
+                </div>
               </div>
             </Card>
           );

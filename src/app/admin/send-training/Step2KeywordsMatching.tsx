@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 interface Step2Props {
@@ -339,8 +340,8 @@ export default function Step2KeywordsMatching({
             <div className="flex items-baseline gap-2 mt-1">
               {isCountLoading ? (
                 <div className="flex items-center gap-2 py-1">
-                  <Loader2 className="w-5 h-5 animate-spin text-[#D58A38]" />
-                  <span className="text-slate-300 text-xs">جاري الحساب...</span>
+                  <Skeleton className="h-9 w-20 bg-white/20 rounded-lg" />
+                  <Skeleton className="h-4 w-16 bg-white/10 rounded-md" />
                 </div>
               ) : (
                 <>

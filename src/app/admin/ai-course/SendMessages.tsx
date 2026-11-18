@@ -115,7 +115,15 @@ const SendMessages = ({ nextStep }: any) => {
 export default SendMessages;
 
 export function OneCourse({ data }: any) {
-    if (!data) return <Spinner />
+    if (!data) {
+        return (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-3 animate-pulse mb-4">
+                <div className="h-44 w-full bg-slate-200/80 rounded-xl" />
+                <div className="h-5 w-3/4 bg-slate-200 rounded-lg" />
+                <div className="h-4 w-1/2 bg-slate-200/60 rounded-md" />
+            </div>
+        );
+    }
     let { title, location, image } = data;
     return (
         <div className="bg-white flex rounded-lg">

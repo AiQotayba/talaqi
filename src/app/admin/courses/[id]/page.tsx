@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SingleCoursePageSkeleton } from '@/components/ui/skeleton';
 
 export default function OneCourses() {
     const params = useParams();
@@ -52,11 +53,7 @@ export default function OneCourses() {
     };
 
     if (loading) {
-        return (
-            <div className="p-16 text-center text-slate-500 text-sm">
-                جاري تحميل تفاصيل الدورة...
-            </div>
-        );
+        return <SingleCoursePageSkeleton />;
     }
 
     if (!data) {
@@ -83,6 +80,12 @@ export default function OneCourses() {
                 to="/admin/courses"
                 action={
                     <div className="flex items-center gap-2">
+                        <Button
+                            onClick={() => router.push(`?editCourseId=${id}`)}
+                            className="bg-[#123D3A] hover:bg-[#0E2F2D] text-white text-xs font-bold rounded-xl shadow-xs"
+                        >
+                            <span>تعديل الدورة</span>
+                        </Button>
                         <Link
                             href={`/courses/${id}`}
                             target="_blank"

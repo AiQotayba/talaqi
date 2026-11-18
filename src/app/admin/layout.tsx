@@ -3,6 +3,7 @@ import Headers from './config';
 import { Header } from './AdminHeader';
 import { AdminSidebar } from './AdminSidebar';
 import { AdminTopNav } from './AdminTopNav';
+import AdminGlobalDialogs from '@/components/admin/AdminGlobalDialogs';
 
 export { Header };
 
@@ -25,6 +26,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
                     {children}
                 </main>
             </div>
+
+            {/* Central Global Dialogs (Triggered by Search Params: courseId, userId, editCourseId, centerId) */}
+            <AdminGlobalDialogs />
         </div>
     );
 }

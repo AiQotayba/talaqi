@@ -24,10 +24,6 @@ import { DataTable, type TableColumn } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -69,9 +65,6 @@ export default function AdminCoursesPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [selectedCourse, setSelectedCourse] = React.useState<CourseRecord | null>(null);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-
   const currentPricing = searchParams?.get("pricing") || "all";
 
   const handlePricingChange = (value: string) => {
@@ -86,12 +79,15 @@ export default function AdminCoursesPage() {
   };
 
   const handleView = (course: CourseRecord) => {
-    setSelectedCourse(course);
-    setDialogOpen(true);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    params.set("courseId", course._id);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const handleEdit = (course: CourseRecord) => {
-    router.push(`/admin/courses/${course._id}`);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    params.set("editCourseId", course._id);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const columns: TableColumn<CourseRecord>[] = [
@@ -288,119 +284,6 @@ export default function AdminCoursesPage() {
           }}
         />
       </div>
-
-      {/* Quick Preview Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-xl p-0 rounded-3xl border border-slate-200 shadow-2xl overflow-hidden [&>button]:text-slate-400 [&>button]:hover:text-slate-700">
-          {selectedCourse && (
-            <div>
-              {/* Image banner if present */}
-              {selectedCourse.image && selectedCourse.image.startsWith("http") && (
-                <div className="w-full h-44 bg-slate-100 relative overflow-hidden border-b border-slate-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={selectedCourse.image}
-                    alt={selectedCourse.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-3 right-4 left-4 text-white">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-amber-300 block mb-1">
-                      {selectedCourse.providingEntity?.name || selectedCourse.center || "جهة معتمدة"}
-                    </span>
-                    <h2 className="text-base sm:text-lg font-black leading-tight drop-shadow-sm">
-                      {selectedCourse.title}
-                    </h2>
-                  </div>
-                </div>
-              )}
-
-              {/* Header without image */}
-              {(!selectedCourse.image || !selectedCourse.image.startsWith("http")) && (
-                <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                  <span className="text-[11px] font-black text-[#123D3A] uppercase tracking-wider block mb-1">
-                    {selectedCourse.providingEntity?.name || selectedCourse.center || "جهة معتمدة"}
-                  </span>
-                  <h2 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                    {selectedCourse.title}
-                  </h2>
-                </div>
-              )}
-
-              {/* Body */}
-              <div className="p-6 space-y-4 text-right">
-                {selectedCourse.summary && (
-                  <div>
-                    <span className="text-xs font-bold text-slate-400 block mb-1">الملخص</span>
-                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                      {selectedCourse.summary}
-                    </p>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl border border-slate-100 bg-white">
-                    <span className="text-slate-400 block text-[11px] mb-0.5">نوع الحضور والموقع</span>
-                    <span className="font-bold text-slate-800 flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-[#D58A38]" />
-                      {selectedCourse.locationType === "online"
-                        ? "عن بعد (أونلاين)"
-                        : selectedCourse.locationDetails?.city || selectedCourse.location || "إدلب"}
-                    </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl border border-slate-100 bg-white">
-                    <span className="text-slate-400 block text-[11px] mb-0.5">الرسوم التدريبية</span>
-                    <span className="font-bold text-slate-800 flex items-center gap-1">
-                      <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
-                      {selectedCourse.pricing?.isFree || selectedCourse.price === 0
-                        ? "مجاني بالكامل"
-                        : `${selectedCourse.pricing?.cost || selectedCourse.price} دولار أمريكي`}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="p-4 bg-white border-t border-slate-100 flex items-center justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                  className="rounded-xl text-xs h-9"
-                >
-                  إغلاق
-                </Button>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Link
-                    href={`/admin/send-training?courseId=${selectedCourse._id}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-xs"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5 fill-white/20" />
-                    <span>إرسال للطلاب المهتمين</span>
-                  </Link>
-
-                  <Link
-                    href={`/courses/${selectedCourse._id}`}
-                    target="_blank"
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-[#123D3A] bg-[#123D3A]/10 hover:bg-[#123D3A]/20 transition"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>معاينة عامة</span>
-                  </Link>
-
-                  <Button
-                    onClick={() => handleEdit(selectedCourse)}
-                    className="rounded-xl text-xs font-bold h-9 bg-[#123D3A] text-white hover:bg-[#0E2F2D]"
-                  >
-                    تعديل البيانات
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -16,6 +16,7 @@ import Step1TrainingMessage from "./Step1TrainingMessage";
 import Step2KeywordsMatching from "./Step2KeywordsMatching";
 import Step3WhatsAppDispatch from "./Step3WhatsAppDispatch";
 import { DEFAULT_WHATSAPP_TEMPLATE } from "./utils";
+import { SendTrainingSkeleton } from "@/components/ui/skeleton";
 
 function SendTrainingContent() {
   const router = useRouter();
@@ -216,13 +217,7 @@ function SendTrainingContent() {
 
 export default function AdminSendTrainingPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="p-8 text-center text-slate-500 font-bold text-xs">
-          جاري تحميل واجهة إرسال التدريب...
-        </div>
-      }
-    >
+    <Suspense fallback={<SendTrainingSkeleton />}>
       <SendTrainingContent />
     </Suspense>
   );
