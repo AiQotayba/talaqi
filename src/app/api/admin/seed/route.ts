@@ -5,7 +5,8 @@ import Organization from '@/models/Organization';
 import User from '@/models/User';
 import Slider from '@/models/Slider';
 import Section from '@/models/Section';
-import { hashPassword, authorizeAdmin } from '@/lib/auth';
+import { authorizeAdmin } from '@/lib/auth';
+import { verifySameOrigin } from '@/lib/security';
 
 const SEED_ORGANIZATIONS = [
   {
@@ -854,9 +855,27 @@ const SEED_SECTIONS = [
 ];
 
 export async function GET(req: NextRequest) {
+  const auth = await authorizeAdmin(req);
+  if (!auth.authorized) return auth.response;
+
+  return NextResponse.json({
+    success: true,
+    message: 'نقطة النهاية المخصصة لتهيئة البيانات (Seed) تتطلب إرسال طلب POST من قِبل مسؤول مخول.',
+  });
+}
+
+export async function POST(req: NextRequest) {
   try {
     const auth = await authorizeAdmin(req);
     if (!auth.authorized) return auth.response;
+
+    // Security: Check CSRF / Origin to prevent cross-site invocation
+    if (!verifySameOrigin(req)) {
+      return NextResponse.json(
+        { success: false, message: 'رفض الطلب: فشل التحقق من مصدر الطلب (CSRF Protection)' },
+        { status: 403 }
+      );
+    }
 
     await connectToDatabase();
 
@@ -905,37 +924,8 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Seed Admin User
-    const adminEmail = 'admin@dolean.com';
-    const adminPassword = 'AdminPassword123';
-    const hashedPassword = await hashPassword(adminPassword);
-
-    const existingAdmin = await User.findOne({ email: adminEmail });
-    if (existingAdmin) {
-      await User.updateOne(
-        { _id: existingAdmin._id },
-        {
-          $set: {
-            password: hashedPassword,
-            roles: ['admin', 'super_admin'],
-            role: 'admin',
-            isVerified: true,
-            deleteState: false,
-          },
-        }
-      );
-    } else {
-      await User.create({
-        name: 'مدير المنصة (Admin)',
-        email: adminEmail,
-        phone: '+963951000000',
-        password: hashedPassword,
-        roles: ['admin', 'super_admin'],
-        role: 'admin',
-        isVerified: true,
-        deleteState: false,
-      });
-    }
+    // Security: Do NOT hardcode or overwrite admin passwords in production route handlers.
+    // Admin management must be done via authenticated admin panel or secure CLI scripts.
 
     const totalCourses = await Course.countDocuments({ deleteState: { $ne: true } });
     const totalOrgs = await Organization.countDocuments({ deleteState: { $ne: true } });
@@ -945,17 +935,13 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'تم إدخال وتحديث تدريبات ومراكز وسلايدرات وأقسام وحساب إدارة إدلب بنجاح',
+      message: 'تم إدخال وتحديث تدريبات ومراكز وسلايدرات وأقسام المنصة بنجاح',
       seededCount,
       totalCoursesInDB: totalCourses,
       totalOrgsInDB: totalOrgs,
       totalSlidersInDB: totalSliders,
       totalSectionsInDB: totalSections,
       totalUsersInDB: totalUsers,
-      adminCredentials: {
-        email: adminEmail,
-        password: adminPassword,
-      },
     });
   } catch (error: any) {
     console.error('Seed API Error:', error);
@@ -964,9 +950,5 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-export async function POST(req: NextRequest) {
-  return GET(req);
 }
 
