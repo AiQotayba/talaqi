@@ -31,7 +31,7 @@
     "lucide-react": "^0.475.0",
     "markdown-it": "^14.1.0",
     "mongoose": "^8.10.1",
-    "next": "^16.4.3",
+    "next": "^16.4.6",
     "next-nprogress-bar": "^2.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
