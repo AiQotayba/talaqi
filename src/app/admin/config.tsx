@@ -12,13 +12,15 @@ export default async function Headers() {
 
     const payload = verifyToken(token.value);
     if (!payload) {
-        redirect('/auth?route=login');
+        // If token is invalid or expired, clear cookies immediately to prevent loops
+        redirect('/api/auth/logout?redirect=/auth?route=login');
     }
 
     const roles = payload.roles || [];
     const isAdmin = payload.role === 'admin' || roles.includes('admin') || roles.includes('super_admin');
     if (!isAdmin) {
-        redirect('/auth?route=login&error=unauthorized');
+        // Non-admin user trying to access admin dashboard -> send to student profile
+        redirect('/profile');
     }
 
     return { Authorization: `Bearer ${token.value}` };
