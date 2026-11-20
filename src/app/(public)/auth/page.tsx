@@ -6,11 +6,13 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Logo from "@/components/theme/Logo";
 import Link from "next/link";
+import { verifyToken } from "@/lib/auth";
 
 interface AuthProps {
     searchParams?: Promise<{
         route?: string;
         token?: string;
+        force?: string;
     }>;
 }
 
@@ -21,8 +23,26 @@ export default async function Auth({ searchParams }: AuthProps) {
     const cookieStore = await cookies();
     const token = cookieStore.get('authorization')?.value;
 
-    if (token) {
-        redirect("/admin");
+    // Handle explicit logout
+    if (route === 'logout') {
+        redirect("/api/auth/logout?redirect=/auth?route=login");
+    }
+
+    // Check token if present
+    if (token && params?.force !== '1') {
+        const payload = verifyToken(token);
+        if (payload) {
+            const roles = payload.roles || [];
+            const isAdmin = payload.role === 'admin' || roles.includes('admin') || roles.includes('super_admin');
+            if (isAdmin) {
+                redirect("/admin");
+            } else {
+                redirect("/profile");
+            }
+        } else {
+            // Expired or invalid token -> wipe cookies cleanly through logout endpoint
+            redirect("/api/auth/logout?redirect=/auth?route=login");
+        }
     }
 
     return (

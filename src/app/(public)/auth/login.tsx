@@ -41,9 +41,9 @@ const Login: React.FC = () => {
             const isAdmin = res?.isAdmin === true || res?.user?.role === 'admin' || res?.user?.roles?.includes('admin') || res?.user?.roles?.includes('super_admin');
 
             if (isAdmin) {
-                router.replace('/admin');
+                window.location.href = '/admin';
             } else {
-                router.replace('/profile');
+                window.location.href = '/profile';
             }
         } catch (error: any) {
             setErrorMessage('حدث خطأ أثناء الاتصال بالخادم. يرجى المحاولة مرة أخرى.');
