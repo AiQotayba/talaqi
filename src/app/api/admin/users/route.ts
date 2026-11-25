@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     const [total, users] = await Promise.all([
       User.countDocuments(query),
       User.find(query)
-        .select('-password')
+        .select('-password -resetPasswordToken -resetPasswordExpires')
         .sort(sortOption)
         .skip(skip)
         .limit(limit)

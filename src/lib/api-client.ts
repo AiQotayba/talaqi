@@ -501,7 +501,7 @@ export function createApi(config: ApiConfig): ApiInstance {
   };
 }
 
-// Create the default API instance for Dolean
+// Create the default API instance for talaqi
 export const api = createApi({
   baseUrl: process.env.NEXT_PUBLIC_API_URL || "/api",
   getLang: () => "ar",

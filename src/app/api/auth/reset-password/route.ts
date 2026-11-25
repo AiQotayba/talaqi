@@ -53,11 +53,13 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // إنشاء رمز إعادة التعيين وصلاحية لمدة ساعة
+    // إنشاء رمز إعادة التعيين وتخزين هاش مشفر منه (OWASP ASVS 2.5.6)
     const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
     const tokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    user.resetPasswordToken = resetToken;
+    // تخزين الهاش فقط في قاعدة البيانات لحماية المستخدمين في حال تسرب البيانات
+    user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = tokenExpiry;
     await user.save();
 

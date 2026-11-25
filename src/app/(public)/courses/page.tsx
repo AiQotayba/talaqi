@@ -7,6 +7,8 @@ import CourseFeedWithFilter from '@/components/courses/CourseFeedWithFilter';
 import { PlusCircle } from 'lucide-react';
 import { CoursesSkeletonGrid } from '@/components/ui/skeleton';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: 'استكشف الدورات والبرامج التدريبية | تلاقي',
     description: 'تصفح جميع الدورات التدريبية المتاحة وسجل في الدورة المناسبة لك',

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/User';
 import { hashPassword } from '@/lib/auth';
@@ -23,9 +24,15 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    // البحث عن المستخدم الذي يملك هذا الرمز ولم تنتهِ صلاحيته بعد
+    const rawToken = token.trim();
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    // البحث عن المستخدم الذي يملك هذا الرمز (بالمطابقة مع الهاش المشفر أو الرمز الأصلي)
     const user = await User.findOne({
-      resetPasswordToken: token.trim(),
+      $or: [
+        { resetPasswordToken: hashedToken },
+        { resetPasswordToken: rawToken },
+      ],
       resetPasswordExpires: { $gt: new Date() },
       deleteState: false,
     });

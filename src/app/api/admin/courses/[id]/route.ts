@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/db';
 import Course from '@/models/Course';
 import { authorizeAdmin } from '@/lib/auth';
@@ -9,6 +10,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
+    if (!id || !mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ message: 'الدورة غير موجودة' }, { status: 404 });
+    }
+
     await connectToDatabase();
     const course = await Course.findById(id);
     if (!course) return NextResponse.json({ message: 'الدورة غير موجودة' }, { status: 404 });
@@ -24,6 +29,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
+    if (!id || !mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ message: 'الدورة غير موجودة' }, { status: 404 });
+    }
+
     const body = await req.json();
     await connectToDatabase();
 
@@ -65,6 +74,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
+    if (!id || !mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ message: 'الدورة غير موجودة' }, { status: 404 });
+    }
+
     await connectToDatabase();
     const course = await Course.findByIdAndUpdate(id, { deleteState: true }, { new: true });
     if (!course) return NextResponse.json({ message: 'الدورة غير موجودة' }, { status: 404 });

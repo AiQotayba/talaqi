@@ -48,21 +48,11 @@ export async function GET(req: NextRequest) {
       const cleanPhone = typeof user.phone === 'string' ? user.phone.trim() : '';
 
       if (cleanEmail && cleanPhone) {
-        // High confidence match: both email and phone match the unlinked application
+        // High confidence match: both email and phone must strictly match the unlinked application
         details = await UserDetails.findOne({
           user_id: null,
           email: cleanEmail,
           phone: cleanPhone,
-          deleteState: false,
-        });
-      }
-
-      if (!details && cleanEmail) {
-        // Medium confidence match: unlinked application has matching non-empty email and no conflicting phone
-        details = await UserDetails.findOne({
-          user_id: null,
-          email: cleanEmail,
-          $or: [{ phone: '' }, { phone: null }, { phone: { $exists: false } }],
           deleteState: false,
         });
       }

@@ -20,11 +20,42 @@ function clearAuthCookies(response: NextResponse) {
   });
 }
 
+function sanitizeRedirectUrl(target: string | null, baseUrl: string): URL {
+  const fallback = new URL('/auth?route=login', baseUrl);
+  if (!target || typeof target !== 'string') {
+    return fallback;
+  }
+
+  const trimmed = target.trim();
+  // Open Redirect Prevention:
+  // Reject protocol-relative URLs (//evil.com), backslash tricks (/\evil.com), and explicit schemes
+  if (trimmed.startsWith('//') || trimmed.startsWith('/\\') || /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+    return fallback;
+  }
+
+  // Must start with a single slash
+  if (!trimmed.startsWith('/')) {
+    return fallback;
+  }
+
+  try {
+    const parsed = new URL(trimmed, baseUrl);
+    const base = new URL(baseUrl);
+    // Enforce identical origin
+    if (parsed.origin !== base.origin) {
+      return fallback;
+    }
+    return parsed;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const redirectTo = searchParams.get('redirect') || '/auth?route=login';
+  const redirectTo = searchParams.get('redirect');
 
-  const redirectUrl = new URL(redirectTo, req.url);
+  const redirectUrl = sanitizeRedirectUrl(redirectTo, req.url);
   const response = NextResponse.redirect(redirectUrl);
   clearAuthCookies(response);
   return response;

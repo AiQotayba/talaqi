@@ -4,7 +4,7 @@ import path from 'path';
 import http from 'http';
 import https from 'https';
 
-const LOCAL_URI = 'mongodb://127.0.0.1:27017/dolean';
+const LOCAL_URI = 'mongodb://127.0.0.1:27017/talaqi';
 
 async function checkUrl(url) {
   if (url.startsWith('/')) {

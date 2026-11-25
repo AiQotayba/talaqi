@@ -3,7 +3,7 @@ import path from 'path';
 
 const html = fs.readFileSync('C:/Users/USER/Downloads/فعاليات الأسبوع العالمي لريادة الأعمال _ إدلب 2026 (6).html', 'utf8');
 
-const outputDir = 'd:/projects/dolean/public/images/events';
+const outputDir = 'd:/projects/talaqi/public/images/events';
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
@@ -23,21 +23,21 @@ for (const tagMatch of allDataImages) {
   const tag = tagMatch[1];
   const srcMatch = tag.match(/src=["']data:image\/([a-zA-Z0-9+]+);base64,([^"']+)["']/i);
   const altMatch = tag.match(/alt=["']([^"']*)["']/i);
-  
+
   if (srcMatch) {
     const ext = srcMatch[1] === 'jpeg' ? 'jpg' : srcMatch[1];
     const base64Data = srcMatch[2];
     const alt = altMatch ? altMatch[1].trim() : `image_${index}`;
-    
+
     // Create safe filename
     const safeName = alt
       .replace(/[^\u0600-\u06FF\w\-]/g, '_')
       .replace(/_+/g, '_')
       .slice(0, 40) || `img_${index}`;
-    
+
     const filename = `${index + 1}_${safeName}.${ext}`;
     const filePath = path.join(outputDir, filename);
-    
+
     fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
     console.log(`Saved: ${filename} (alt: "${alt}", size: ${base64Data.length} chars)`);
     extracted.push({ filename, alt, relativePath: `/images/events/${filename}` });
@@ -46,4 +46,4 @@ for (const tagMatch of allDataImages) {
 }
 
 console.log(`\nSuccessfully extracted ${extracted.length} images to ${outputDir}`);
-fs.writeFileSync('d:/projects/dolean/scripts/extracted_images_manifest.json', JSON.stringify(extracted, null, 2), 'utf8');
+fs.writeFileSync('d:/projects/talaqi/scripts/extracted_images_manifest.json', JSON.stringify(extracted, null, 2), 'utf8');

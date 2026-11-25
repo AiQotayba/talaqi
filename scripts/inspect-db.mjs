@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/dolean');
+  await mongoose.connect('mongodb://127.0.0.1:27017/talaqi');
   const db = mongoose.connection.db;
   const courses = await db.collection('courses').find({ deleteState: { $ne: true } }).toArray();
   console.log(`Found ${courses.length} courses:`);

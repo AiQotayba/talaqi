@@ -1,4 +1,4 @@
-# وثيقة متطلبات ومعمارية المنتج (PRD) - منصة دوليان (Dolean)
+# وثيقة متطلبات ومعمارية المنتج (PRD) - منصة تلاقي (talaqi)
 
 > **الإصدار:** 2.0.0 (Unified Architecture)  
 > **تاريخ التحديث:** أكتوبر 2026  
@@ -21,10 +21,10 @@
 ## 1. نظرة عامة على المشروع (Project Overview)
 
 ### 1.1 اسم المشروع
-**منصة دوليان (Dolean)** — بوابة التمكين المهني والربط الأكاديمي والتدريبي في الشمال السوري.
+**منصة تلاقي (talaqi)** — بوابة التمكين المهني والربط الأكاديمي والتدريبي في الشمال السوري.
 
 ### 1.2 الرؤية والرسالة
-* **الرؤية:** أن تصبح "دوليان" المنصة المركزية والموثوقة الأولى في الشمال السوري (محافظة إدلب والمناطق المحيطة) لجمع، تدقيق، وعرض كافة الفرص التدريبية والمهنية.
+* **الرؤية:** أن تصبح "تلاقي" المنصة المركزية والموثوقة الأولى في الشمال السوري (محافظة إدلب والمناطق المحيطة) لجمع، تدقيق، وعرض كافة الفرص التدريبية والمهنية.
 * **الرسالة:** ربط الطلاب والباحثين عن مهارات بسوق العمل والمراكز التدريبية الشريكة، وتمكين المعاهد والمنظمات من استقطاب المستفيدين الأكثر حاجة وتنسيق الدورات بكفاءة وسرعة.
 
 ### 1.3 الجمهور المستهدف (Target Audiences)
@@ -60,7 +60,7 @@
 تعتمد المنصة معمارية Next.js App Router الموحدة، حيث توجد كافة مسارات الواجهة ومسارات الخادم (Backend APIs) تحت مجلد `src/`:
 
 ```plaintext
-dolean/
+talaqi/
 ├── docs/                                  # التوثيق المعماري ومخططات قواعد البيانات
 │   ├── ARCHITECTURE_BLUEPRINT.md
 │   ├── DATABASE_SCHEMA.md
@@ -207,7 +207,7 @@ erDiagram
 ### 4.1 تفاصيل النماذج الرئيسية:
 
 #### 1. نموذج المستخدم (`User.ts`)
-* **المسار:** [src/models/User.ts](file:///d:/projects/dolean/src/models/User.ts)
+* **المسار:** [src/models/User.ts](file:///d:/projects/talaqi/src/models/User.ts)
 * **الأدوار المدعومة (`roles`):**
   * `student`: طالب / مستفيد يبحث عن تدريب.
   * `center_admin`: مدير معهد أو مركز تدريبي شريك.
@@ -220,7 +220,7 @@ erDiagram
   * `deleteState`: للحذف الناعم (Soft Delete).
 
 #### 2. نموذج الدورة المعتمدة (`Course.ts`)
-* **المسار:** [src/models/Course.ts](file:///d:/projects/dolean/src/models/Course.ts)
+* **المسار:** [src/models/Course.ts](file:///d:/projects/talaqi/src/models/Course.ts)
 * **الكيان المزدوج:**
   * **الجهة المقدمة للتدريب (`providingEntity`):** المعهد أو الجمعية التي تقدم المحتوى العملي والشهادة (مثل: معهد الأمل، منظمة بنفسج).
   * **الجهة الناشرة (`publishingEntity`):** المستخدم أو الطرف الذي أدخل الإعلان (المنصة، محرر خارجي، أو المركز نفسه).
@@ -228,17 +228,17 @@ erDiagram
 * **التسعير:** مجانية (`isFree: true`)، أو مدفوعة مع إمكانية توفير منحة مالية للمتدربين (`stipendProvided`).
 
 #### 3. مسودة الدورة (`DefCourse.ts`)
-* **المسار:** [src/models/DefCourse.ts](file:///d:/projects/dolean/src/models/DefCourse.ts)
+* **المسار:** [src/models/DefCourse.ts](file:///d:/projects/talaqi/src/models/DefCourse.ts)
 * تمثل الوعاء الذي يستقبل الإعلانات الخام (نصوص الإعلانات في واتساب وتلغرام، أو صور البروشورات).
 * يتم إرسالها إلى محرك الذكاء الاصطناعي (`processedByAi: true`) ليتم تفريغها في `aiExtractedData`، ثم مراجعتها من الأدمن واعتمادها لتتحول إلى `Course` معتمد.
 
 #### 4. المنظمات والمراكز (`Organization.ts`)
-* **المسار:** [src/models/Organization.ts](file:///d:/projects/dolean/src/models/Organization.ts)
+* **المسار:** [src/models/Organization.ts](file:///d:/projects/talaqi/src/models/Organization.ts)
 * يوثق بيانات المراكز والمعاهد الرسمية، ونوعها (`institute`, `ngo`, `university`, `company`).
 * يدعم التوثيق الرسمي عبر حقل `isVerified: boolean`.
 
 #### 5. رغبات وبيانات الطلاب (`UserDetails.ts`)
-* **المسار:** [src/models/UserDetails.ts](file:///d:/projects/dolean/src/models/UserDetails.ts)
+* **المسار:** [src/models/UserDetails.ts](file:///d:/projects/talaqi/src/models/UserDetails.ts)
 * يسجل اهتمامات الطلاب التدريبية، المنطقة المفضلة، المستوى التعليمي، وإتقان الحاسوب واللغة، لمطابقتهم آلياً مع الدورات القادمة.
 
 ---
@@ -253,7 +253,7 @@ erDiagram
 * **تخزين التوكن:** يُخزن في كوكيز المتصفح (`authorization`)، مع إرساله في الـ Headers (`Authorization: Bearer <token>`) أثناء استدعاءات الخادم.
 
 ### 5.2 إدارة الصلاحيات المبنية على الأدوار (RBAC)
-تعتمد المنصة الدالة المركزية **`requireAuth(req, allowedRoles)`** الموجودة في [src/lib/auth.ts](file:///d:/projects/dolean/src/lib/auth.ts):
+تعتمد المنصة الدالة المركزية **`requireAuth(req, allowedRoles)`** الموجودة في [src/lib/auth.ts](file:///d:/projects/talaqi/src/lib/auth.ts):
 
 ```typescript
 // آلية التحقق من الصلاحيات
@@ -291,14 +291,14 @@ export async function requireAuth(req: NextRequest, allowedRoles?: string[]): Pr
 ## 6. التكاملات الخارجية ومحركات المعالجة (External Integrations)
 
 ### 6.1 محرك استخراج الإعلانات الذكي (Google Gemini AI)
-* **المسار:** [src/lib/gemini.ts](file:///d:/projects/dolean/src/lib/gemini.ts)
+* **المسار:** [src/lib/gemini.ts](file:///d:/projects/talaqi/src/lib/gemini.ts)
 * **النموذج:** `gemini-3.8-flash` و `gemini-2.5-flash`.
 * **الوظيفة:**
   1. استقبال نصوص إعلانات الدورات الطويلة أو الملصقات الصورية عبر الرؤية الحاسوبية (Multimodal Vision).
   2. تحويل الإعلان الخام إلى كائن JSON منضبط يحدد: اسم الدورة، الجهة المنظمة، مكان التدريب، الفئة العمرية المستهدفة، شروط التسجيل، والمواعيد بدقة.
 
 ### 6.2 بوابة الرسائل التلقائية عبر واتساب (WhatsApp Gateway)
-* **المسار:** [src/lib/wa.ts](file:///d:/projects/dolean/src/lib/wa.ts)
+* **المسار:** [src/lib/wa.ts](file:///d:/projects/talaqi/src/lib/wa.ts)
 * **الوظيفة:**
   1. إرسال روابط تعيين كلمة المرور للمستخدم عند طلبها عبر رسالة واتساب فورية لرقم هاتفه.
   2. إرسال تنبيهات مطابقة فورية عند افتتاح مقاعد جديدة في دورات تناسب رغبة الطالب المسجلة في إدلب.

@@ -12,9 +12,17 @@ export default function Nav() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check login state via public cookie or quick session check
+    // Only verify session if a credentials cookie or admin flag exists
+    const hasToken = Cookies.get("authorization");
     const isAdmin = Cookies.get("isAdmin");
-    fetch("/api/auth")
+    if (!hasToken && !isAdmin) {
+      setIsLoggedIn(false);
+      setProfileHref("/auth?route=login");
+      return;
+    }
+
+    const controller = new AbortController();
+    fetch("/api/auth", { signal: controller.signal })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -24,17 +32,21 @@ export default function Nav() {
       .then((data) => {
         if (data?.success && data?.user) {
           setIsLoggedIn(true);
-          const hasAdmin = isAdmin === "true" || data.user.roles?.includes("admin") || data.user.roles?.includes("super_admin");
-          setProfileHref(hasAdmin ? "/admin" : "/profile");
+          const hasAdminRole = isAdmin === "true" || data.user.roles?.includes("admin") || data.user.roles?.includes("super_admin");
+          setProfileHref(hasAdminRole ? "/admin" : "/profile");
         } else {
           setIsLoggedIn(false);
           setProfileHref("/auth?route=login");
         }
       })
-      .catch(() => {
-        setIsLoggedIn(false);
-        setProfileHref("/auth?route=login");
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          setIsLoggedIn(false);
+          setProfileHref("/auth?route=login");
+        }
       });
+
+    return () => controller.abort();
   }, []);
 
   return (
@@ -51,8 +63,8 @@ export default function Nav() {
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex items-center gap-1">
               <NavLink href="/" text="الرئيسية" icon={<Home className="w-4 h-4" />} />
-              <NavLink href="/courses" text="الدورات" icon={<Compass className="w-4 h-4" />} />
-              <NavLink href="/how-it-works" text="كيف تستفيد؟" icon={<HelpCircle className="w-4 h-4" />} />
+              <NavLink href="/courses" text="تصفح الدورات" icon={<Compass className="w-4 h-4" />} />
+              <NavLink href="/how-it-works" text="كيف يعمل تلاقي؟" icon={<HelpCircle className="w-4 h-4" />} />
               <NavLink href="/about" text="من نحن" icon={<Info className="w-4 h-4" />} />
             </div>
           </div>
@@ -65,7 +77,7 @@ export default function Nav() {
               className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#D58A38] hover:bg-[#BE772B] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#D58A38]/25 transition active:scale-95"
             >
               <PlusCircle className="w-4 h-4 shrink-0" />
-              <span>اطلب دورتك مجاناً</span>
+              <span>اطلب دورتك</span>
             </Link>
 
             {/* Secondary CTA: Plain text link */}
@@ -102,13 +114,13 @@ export default function Nav() {
             />
             <MobileNavLink
               href="/courses"
-              text="الدورات"
+              text="تصفح الدورات"
               icon={<Compass className="w-4 h-4" />}
               onClick={() => setMobileMenuOpen(false)}
             />
             <MobileNavLink
               href="/how-it-works"
-              text="كيف تستفيد؟"
+              text="كيف يعمل تلاقي؟"
               icon={<HelpCircle className="w-4 h-4" />}
               onClick={() => setMobileMenuOpen(false)}
             />

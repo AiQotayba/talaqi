@@ -15,9 +15,9 @@ import {
 import Logo from '@/components/theme/Logo';
 
 export const metadata: Metadata = {
-  title: 'كيف تستفيد من تلاقي؟ | منصة تلاقي',
+  title: 'كيف يعمل تلاقي؟ | منصة تلاقي',
   description:
-    'تعرف على كيفية الاستفادة من منصة تلاقي: اكتشف التدريبات والبرامج التعليمية، تعرّف على التفاصيل، قدّم طلب تدريب غير متوفر، وشارك فرصك التدريبية.',
+    'تعرف على كيفية عمل منصة تلاقي: تصفح الدورات المتاحة، تعرّف على التفاصيل، قدّم طلب دورة مخصصة، وشارك فرصك التدريبية.',
 };
 
 export default function HowToBenefitPage() {
@@ -31,19 +31,19 @@ export default function HowToBenefitPage() {
         <div className="max-w-4xl mx-auto relative z-10 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D58A38]/20 text-amber-300 border border-[#D58A38]/40 text-xs font-black mx-auto">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>تجربة المستخدم في تلاقي</span>
+            <span>خطوات بسيطة ومباشرة</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#F8F8F5] tracking-tight leading-tight max-w-3xl mx-auto">
-            كيف تستفيد من تلاقي؟
+            كيف يعمل تلاقي؟
           </h1>
 
           <p className="text-lg sm:text-xl text-amber-200/90 font-bold max-w-2xl mx-auto leading-relaxed">
-            فرص التعلم أقرب مما تتوقع!
+            فرص التعلم وبناء المهارات أقرب مما تتوقع
           </p>
 
           <p className="text-sm sm:text-base text-[#A9B5B0] leading-relaxed max-w-2xl mx-auto font-normal">
-            تلاقي مساحة تساعدك على اكتشاف الفرص التدريبية والتعليمية، والتعرف على البرامج التي تناسب اهتماماتك، والتعبير عن المهارات التي ترغب في تعلمها.
+            تلاقي منصة تساعدك على اكتشاف الفرص التدريبية المتاحة، والتعرف على تفاصيلها، والتعبير عن أي مهارة ترغب بتعلّمها لنصلك بالمراكز المناسبة.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -52,7 +52,7 @@ export default function HowToBenefitPage() {
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#D58A38] hover:bg-[#BE772B] text-white font-black text-sm shadow-xl shadow-[#D58A38]/30 transition active:scale-95"
             >
               <Compass className="w-4 h-4" />
-              <span>اكتشف التدريبات</span>
+              <span>تصفح الدورات</span>
             </Link>
 
             <Link

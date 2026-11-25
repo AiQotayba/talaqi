@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it';
 import Link from 'next/link';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/db';
 import Course from '@/models/Course';
 import { 
@@ -16,11 +17,28 @@ import {
   Sparkles 
 } from 'lucide-react';
 
+function isSafeUrl(url: string): boolean {
+    if (!url || typeof url !== 'string') return false;
+    try {
+        const parsed = new URL(url);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     try {
+        if (!id || !mongoose.isValidObjectId(id)) {
+            return { title: 'تفاصيل الدورة التدريبية | تلاقي' };
+        }
         await connectToDatabase();
-        const course = await Course.findById(id).lean();
+        const course = await Course.findOne({
+            _id: id,
+            status: 'published',
+            deleteState: { $ne: true },
+        }).lean();
         if (course) {
             return {
                 title: `${course.title} | تلاقي`,
@@ -40,12 +58,19 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function OneCourse({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const md = new MarkdownIt({ html: true, linkify: true });
+    // Security: html: false prevents Stored XSS from arbitrary HTML tags in course descriptions
+    const md = new MarkdownIt({ html: false, linkify: true });
 
     let course: any = null;
     try {
-        await connectToDatabase();
-        course = await Course.findById(id).lean();
+        if (id && mongoose.isValidObjectId(id)) {
+            await connectToDatabase();
+            course = await Course.findOne({
+                _id: id,
+                status: 'published',
+                deleteState: { $ne: true },
+            }).lean();
+        }
     } catch (err) {
         console.error("Error loading course:", err);
     }
@@ -96,6 +121,7 @@ export default async function OneCourse({ params }: { params: Promise<{ id: stri
 
     const providingName = providingEntity?.name || "";
     const publishingName = publishingEntity?.name || "";
+    const safeLinks = Array.isArray(links) ? links.filter(isSafeUrl) : [];
 
     return (
         <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
@@ -193,9 +219,9 @@ export default async function OneCourse({ params }: { params: Promise<{ id: stri
 
                         {/* Quick Actions */}
                         <div className="flex flex-wrap items-center gap-3 pt-2">
-                            {links && links.length > 0 ? (
+                            {safeLinks.length > 0 ? (
                                 <a
-                                    href={links[0]}
+                                    href={safeLinks[0]}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex-1 min-w-[200px] py-3.5 px-6 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-extrabold text-sm text-center shadow-md shadow-primary-600/25 transition flex items-center justify-center gap-2"
@@ -232,11 +258,11 @@ export default async function OneCourse({ params }: { params: Promise<{ id: stri
                 </div>
 
                 {/* Additional Links list */}
-                {links && links.length > 0 && (
+                {safeLinks.length > 0 && (
                     <div className="mt-8 pt-6 border-t border-slate-100 bg-slate-50 p-5 rounded-2xl">
                         <h4 className="text-sm font-bold text-slate-900 mb-2">روابط الاستمارات والتسجيل المرفقة:</h4>
                         <div className="space-y-1.5">
-                            {links.map((link: string, index: number) => (
+                            {safeLinks.map((link: string, index: number) => (
                                 <a
                                     key={index}
                                     href={link}

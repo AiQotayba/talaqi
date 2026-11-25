@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const eventsDir = 'd:/projects/dolean/public/images/events';
+const eventsDir = 'd:/projects/talaqi/public/images/events';
 
 const mapping = [
   { src: '1_Startup_Syria.png', dest: 'startup_syria_logo.png' },

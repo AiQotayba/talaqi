@@ -1,5 +1,5 @@
 # توثيق نماذج وقواعد البيانات (MongoDB Schema Specification)
-## مشروع دوليان (Dolean) - البنية المعمارية لقاعدة البيانات
+## مشروع تلاقي (talaqi) - البنية المعمارية لقاعدة البيانات
 
 ---
 
@@ -12,7 +12,7 @@
 ```typescript
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/dolean';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/talaqi';
 
 if (!MONGODB_URI) {
   throw new Error('يرجى تحديد متغير البيئة MONGODB_URI في ملف .env');
@@ -150,7 +150,7 @@ export interface IOrganization extends Document {
     district?: string;
     street?: string;
   };
-  isVerified: boolean; // هل تم التحقق من اعتماد المركز من قبل دوليان
+  isVerified: boolean; // هل تم التحقق من اعتماد المركز من قبل تلاقي
   verifiedAt?: Date;
   deleteState: boolean;
   createdAt: Date;
@@ -217,11 +217,11 @@ export interface ICourse extends Document {
     logo?: string;
   };
 
-  // الجهة الناشرة (من أدخل الإعلان على منصة دوليان)
+  // الجهة الناشرة (من أدخل الإعلان على منصة تلاقي)
   publishingEntity: {
     publisherType: 'platform' | 'organization' | 'external_editor';
     publisherId: mongoose.Types.ObjectId;   // المعرف الخاص بالمستخدم أو المسؤول
-    name: string;                           // مثال: منصة دوليان أو ممثل المركز
+    name: string;                           // مثال: منصة تلاقي أو ممثل المركز
   };
 
   locationType: 'online' | 'in_person' | 'hybrid';

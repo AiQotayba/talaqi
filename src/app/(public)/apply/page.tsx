@@ -587,7 +587,7 @@ function ApplyForm() {
                 <span>جارٍ تسجيل طلبك التدريبي...</span>
               ) : (
                 <>
-                  <span>{isLoggedIn ? 'إرسال رغبة التدريب المخصصة' : 'سجّل طلبك الآن مجاناً'}</span>
+                  <span>إرسال الطلب مجاناً</span>
                   <ArrowLeft className="w-4 h-4 shrink-0" />
                 </>
               )}

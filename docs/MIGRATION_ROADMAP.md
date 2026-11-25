@@ -1,5 +1,5 @@
 # خارطة طريق الهجرة والتنفيذ العملي (Migration & Execution Roadmap)
-## نقل منصة دوليان (Dolean) إلى تطبيق Next.js موحد في جذر المشروع
+## نقل منصة تلاقي (talaqi) إلى تطبيق Next.js موحد في جذر المشروع
 
 ---
 
@@ -9,7 +9,7 @@
 
 ```
 [الحالة الحالية]                                                    [الحالة المستهدفة]
-├── client/ (Vite React قديم) ------------> [إلغاء وأرشفة]           dolean/
+├── client/ (Vite React قديم) ------------> [إلغاء وأرشفة]           talaqi/
 ├── microservices/ (خدمات غير مستخدمة) ----> [إلغاء وأرشفة]           ├── docs/
 ├── server/ (Express.js) -----------------> [نقل إلى app/api/]       ├── public/
 └── web/ (Next.js 14 في مجلد فرعي) -------> [ترقية ونقل إلى Root]     ├── src/
@@ -105,6 +105,6 @@
 - تشغيل التطبيق عبر PM2:
   ```bash
   pnpm build
-  pm2 start pnpm --name "dolean-app" -- start
+  pm2 start pnpm --name "talaqi-app" -- start
   ```
 - إعداد Nginx كـ Reverse Proxy لتوجيه المنفذ 3000 مع تفعيل شهادة SSL مجانية عبر Let's Encrypt.

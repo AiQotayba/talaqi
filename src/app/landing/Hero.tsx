@@ -56,15 +56,15 @@ export default function Hero() {
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#F8F8F5] tracking-tight leading-tight">
-              تعلّم المهارة التي تفتح لك باب العمل،{' '}
+              تعلّم المهارة التي تحتاجها،{' '}
               <span className="text-[#D58A38]">
-                ونحن نصلك بالمكان المناسب
+                ودعنا نصلك بالمركز المناسب
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-sm sm:text-base text-[#A9B5B0] leading-relaxed font-normal max-w-lg">
-              قلّنا شو بدك تتعلم. منطابق طلبك مع مراكز معتمدة في إدلب، وبتوصلك التفاصيل على واتساب. مجاناً، بدون ما تدور وتضيّع وقتك.
+              أخبرنا بالمهارة التي ترغب بتعلّمها، ونحن نطابق رغبتك مع مراكز معتمدة في إدلب. التفاصيل تصلك مباشرة على واتساب، ومجاناً بالكامل.
             </p>
 
             {/* CTAs */}
@@ -75,14 +75,14 @@ export default function Hero() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#D58A38] hover:bg-[#BE772B] text-white font-black text-sm transition-all active:scale-95 shadow-lg shadow-[#D58A38]/25 cursor-pointer"
               >
                 <Zap className="w-4 h-4 fill-white text-white" />
-                <span>ابدأ طلبك بدقيقة</span>
+                <span>اطلب دورتك بدقيقة</span>
               </button>
 
               <a
                 href="#courses"
                 className="inline-flex items-center gap-1.5 text-sm font-bold text-[#F8F8F5] hover:text-[#D58A38] underline underline-offset-4 transition"
               >
-                <span>شوف الدورات المتاحة الآن</span>
+                <span>استكشف الدورات المتاحة</span>
                 <ArrowLeft className="w-4 h-4" />
               </a>
             </div>

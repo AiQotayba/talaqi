@@ -13,7 +13,7 @@ export default function Footer() {
                             <Logo size="md" />
                         </Link>
                         <p className="text-xs text-slate-500 leading-relaxed font-normal">
-                            مساحة تجمع الفرص التدريبية والتعليمية في مكان واحد، وتساعدك على اكتشاف ما يناسبك والتعبير عما ترغب في تعلمه.
+                            منصة تجمع الفرص التدريبية والتعليمية في الشمال السوري، وتساعدك على اكتشاف ما يناسبك والانطلاق نحو سوق العمل.
                         </p>
                     </div>
 
@@ -23,19 +23,19 @@ export default function Footer() {
                             الرئيسية
                         </Link>
                         <Link href="/courses" className="hover:text-[#D58A38] transition-colors py-1">
-                            استكشف التدريبات
+                            تصفح الدورات
                         </Link>
                         <Link href="/how-it-works" className="hover:text-[#D58A38] transition-colors py-1">
-                            كيف تستفيد؟
+                            كيف يعمل تلاقي؟
                         </Link>
                         <Link href="/about" className="hover:text-[#D58A38] transition-colors py-1">
                             من نحن
                         </Link>
                         <Link href="/apply" className="hover:text-[#D58A38] transition-colors py-1">
-                            اطلب تدريباً
+                            اطلب دورتك
                         </Link>
                         <Link href="/share" className="hover:text-[#D58A38] transition-colors py-1">
-                            شارك تدريباً
+                            شارك فرصة
                         </Link>
                     </nav>
                 </div>
@@ -51,7 +51,7 @@ export default function Footer() {
                             شروط الاستخدام
                         </Link>
                         <a
-                            href="mailto:aiqotayba@gmail.com"
+                            href="mailto:info@talaqi.org"
                             className="hover:text-[#123D3A] transition-colors"
                         >
                             تواصل معنا

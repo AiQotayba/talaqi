@@ -5,7 +5,10 @@ import { connectToDatabase } from './db';
 import User, { IUser, UserRole } from '@/models/User';
 
 function getJwtSecret(): string {
-  const secret = process.env.JWT_SECRET || 'dolean_jwt_secret_2026_super_secure';
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+  }
   return secret;
 }
 
@@ -45,8 +48,13 @@ export async function getAuthUser(req: NextRequest): Promise<IUser | null> {
     let token = '';
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    } else {
+      const candidate = authHeader.split(' ')[1]?.trim();
+      if (candidate && candidate !== 'undefined' && candidate !== 'null' && candidate.length > 10) {
+        token = candidate;
+      }
+    }
+    
+    if (!token) {
       const cookie = req.cookies.get('authorization');
       token = cookie?.value || '';
     }

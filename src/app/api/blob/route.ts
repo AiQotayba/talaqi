@@ -6,9 +6,22 @@ import { getAuthUser } from '@/lib/auth';
 function isAllowedBlobHost(urlString: string): boolean {
   try {
     const parsed = new URL(urlString);
+    // Strict protocol check - HTTPS only
+    if (parsed.protocol !== 'https:') {
+      return false;
+    }
+    const hostname = parsed.hostname.toLowerCase();
+    // Block local addresses, IP addresses, and non-vercel domains
+    if (/^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|169\.254\.)/.test(hostname)) {
+      return false;
+    }
+    // Block path traversal attempts
+    if (parsed.pathname.includes('..')) {
+      return false;
+    }
     return (
-      parsed.hostname.endsWith('.public.blob.vercel-storage.com') ||
-      parsed.hostname.endsWith('.blob.vercel-storage.com')
+      hostname.endsWith('.public.blob.vercel-storage.com') ||
+      hostname.endsWith('.blob.vercel-storage.com')
     );
   } catch {
     return false;

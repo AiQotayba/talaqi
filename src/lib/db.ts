@@ -7,7 +7,7 @@ if (isProduction && !MONGODB_URI) {
   throw new Error('FATAL: MONGODB_URI environment variable is missing in production environment!');
 }
 
-const EFFECTIVE_URI = MONGODB_URI || 'mongodb://127.0.0.1:27017/dolean';
+const EFFECTIVE_URI = MONGODB_URI || 'mongodb://127.0.0.1:27017/talaqi';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -24,7 +24,7 @@ if (!global.mongooseCache) {
   global.mongooseCache = cached;
 }
 
-const LOCAL_FALLBACK_URI = 'mongodb://127.0.0.1:27017/dolean';
+const LOCAL_FALLBACK_URI = 'mongodb://127.0.0.1:27017/talaqi';
 
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (cached.conn && mongoose.connection.readyState === 1) {

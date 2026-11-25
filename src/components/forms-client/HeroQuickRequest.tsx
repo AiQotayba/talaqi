@@ -182,14 +182,14 @@ export default function HeroQuickRequest() {
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-black text-[#123D3A]">
-              {step === 1 && 'شو المهارة اللي بدك تتعلمها؟'}
+              {step === 1 && 'ما المهارة التي ترغب بتعلّمها؟'}
               {step === 2 && 'المنطقة وتفضيلات الدورة'}
               {step === 3 && 'وصل طلبك بنجاح ✓'}
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              {step === 1 && 'اختر مهارة أو أكثر، ونحن نربطك بالمراكز المعتمدة مجاناً'}
+              {step === 1 && 'اختر مهارة أو أكثر، ونحن نصلك بالمراكز المعتمدة مجاناً'}
               {step === 2 && 'حدد مدينتك ونوع الدورة المفضل لتوجيه طلبك بدقة'}
-              {step === 3 && 'سنراسلك عبر واتساب فور توفر مقعد مناسب لك'}
+              {step === 3 && 'سنراجع الشواغر ونراسلك عبر واتساب فور توفر دورة مناسبة'}
             </p>
           </div>
         </div>
@@ -247,7 +247,7 @@ export default function HeroQuickRequest() {
               value={customCourseQuery}
               onChange={(e) => setCustomCourseQuery(e.target.value)}
               rows={3}
-              placeholder="اكتب هنا أي تخصصات أو مهارات إضافية (مثال: ذكاء اصطناعي، محادثة تركية، تسويق رقمي، حلاقة رجالية، صيانة طاقة شمسية...)"
+              placeholder="اكتب أي مهارة أخرى تبحث عنها (مثال: تمريض، لغة تركية، صيانة طاقة شمسية، حلاقة، تصميم...)"
               className="w-full p-3.5 text-xs sm:text-sm bg-white border border-[#A9B5B0]/60 focus:border-[#123D3A] focus:ring-2 focus:ring-[#123D3A]/10 rounded-2xl leading-relaxed outline-none transition"
             />
           </div>
@@ -483,7 +483,7 @@ export default function HeroQuickRequest() {
                 <span>جارٍ إرسال طلبك...</span>
               ) : (
                 <>
-                  <span>إرسال طلب الدورة وتأكيد التسجيل</span>
+                  <span>إرسال الطلب مجاناً</span>
                   <CheckCircle2 className="w-5 h-5 shrink-0" />
                 </>
               )}

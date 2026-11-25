@@ -7,34 +7,49 @@ export async function GET(req: NextRequest) {
     await connectToDatabase();
     const { searchParams } = new URL(req.url);
 
-    const query: any = { deleteState: { $ne: true } };
+    // Public course endpoint must strictly enforce published status and non-deleted state
+    const andConditions: any[] = [
+      { deleteState: { $ne: true } },
+      { status: 'published' },
+    ];
 
-    const search = searchParams.get('q');
-    if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { context: { $regex: search, $options: 'i' } },
-        { 'providingEntity.name': { $regex: search, $options: 'i' } },
-        { keys: { $in: [new RegExp(search, 'i')] } },
-      ];
+    const rawSearch = searchParams.get('q')?.trim();
+    if (rawSearch) {
+      // Escape special regex characters to prevent ReDoS and regex injection attacks
+      const escapedSearch = rawSearch.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const searchRegex = new RegExp(escapedSearch, 'i');
+      andConditions.push({
+        $or: [
+          { title: searchRegex },
+          { context: searchRegex },
+          { 'providingEntity.name': searchRegex },
+          { keys: { $in: [searchRegex] } },
+        ],
+      });
     }
 
-    const city = searchParams.get('city');
-    if (city && city !== 'all') {
-      query.$or = [
-        { location: { $regex: city, $options: 'i' } },
-        { 'locationDetails.city': { $regex: city, $options: 'i' } },
-      ];
+    const rawCity = searchParams.get('city')?.trim();
+    if (rawCity && rawCity !== 'all') {
+      const escapedCity = rawCity.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const cityRegex = new RegExp(escapedCity, 'i');
+      andConditions.push({
+        $or: [
+          { location: cityRegex },
+          { 'locationDetails.city': cityRegex },
+        ],
+      });
     }
 
     const isOnline = searchParams.get('isOnline');
     if (isOnline !== null) {
       if (isOnline === 'true') {
-        query.locationType = 'online';
+        andConditions.push({ locationType: 'online' });
       } else if (isOnline === 'false') {
-        query.locationType = { $in: ['in_person', 'hybrid'] };
+        andConditions.push({ locationType: { $in: ['in_person', 'hybrid'] } });
       }
     }
+
+    const query = andConditions.length === 1 ? andConditions[0] : { $and: andConditions };
 
     const courses = await Course.find(query).sort({ createdAt: -1 }).lean();
     return NextResponse.json(courses);

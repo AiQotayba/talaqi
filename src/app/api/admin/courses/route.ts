@@ -19,35 +19,41 @@ export async function GET(req: NextRequest) {
     const sortField = searchParams.get('sort_field') || 'createdAt';
     const sortOrder = searchParams.get('sort_order') === 'asc' ? 1 : -1;
 
-    const query: any = { deleteState: { $ne: true } };
+    const conditions: any[] = [{ deleteState: { $ne: true } }];
 
     // Search filter across title, summary, provider, and city
     if (search) {
       const regex = new RegExp(search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), 'i');
-      query.$or = [
-        { title: regex },
-        { summary: regex },
-        { 'providingEntity.name': regex },
-        { 'locationDetails.city': regex },
-        { location: regex },
-        { keys: regex },
-      ];
+      conditions.push({
+        $or: [
+          { title: regex },
+          { summary: regex },
+          { 'providingEntity.name': regex },
+          { 'locationDetails.city': regex },
+          { location: regex },
+          { keys: regex },
+        ],
+      });
     }
 
     // Pricing filter
     if (pricingFilter === 'free') {
-      query.$or = [{ 'pricing.isFree': true }, { price: 0 }];
+      conditions.push({
+        $or: [{ 'pricing.isFree': true }, { price: 0 }],
+      });
     } else if (pricingFilter === 'paid') {
-      query.$and = [
-        { 'pricing.isFree': false },
-        { $or: [{ 'pricing.cost': { $gt: 0 } }, { price: { $gt: 0 } }] },
-      ];
+      conditions.push({
+        'pricing.isFree': false,
+        $or: [{ 'pricing.cost': { $gt: 0 } }, { price: { $gt: 0 } }],
+      });
     }
 
     // Status filter
     if (statusFilter && statusFilter !== 'all') {
-      query.status = statusFilter;
+      conditions.push({ status: statusFilter });
     }
+
+    const query = conditions.length === 1 ? conditions[0] : { $and: conditions };
 
     // Sort options
     const sortOption: any = {};

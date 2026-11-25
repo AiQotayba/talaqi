@@ -1,7 +1,7 @@
 import fs from 'fs';
 import mongoose from 'mongoose';
 
-const LOCAL_URI = 'mongodb://127.0.0.1:27017/dolean';
+const LOCAL_URI = 'mongodb://127.0.0.1:27017/talaqi';
 
 async function exportJson() {
   await mongoose.connect(LOCAL_URI);
@@ -35,8 +35,8 @@ async function exportJson() {
   };
 
   const targets = [
-    'd:/projects/dolean/docs/dolean_idlib_training_seed_2026_v2.json',
-    'd:/projects/dolean/dolean_idlib_training_seed_2026_v2.json'
+    'd:/projects/talaqi/docs/talaqi_idlib_training_seed_2026_v2.json',
+    'd:/projects/talaqi/talaqi_idlib_training_seed_2026_v2.json'
   ];
 
   targets.forEach(t => {

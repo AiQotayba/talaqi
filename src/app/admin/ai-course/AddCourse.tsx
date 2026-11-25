@@ -82,8 +82,13 @@ export default function AddCourse({ nextStep, prevStep, draftId }: AddCourseProp
       };
 
       const url = `/api/admin/courses`;
+      const headers: Record<string, string> = {};
+      if (token && token !== "undefined" && token !== "null") {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       const response = await axios.post(url, payload, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers,
+        withCredentials: true,
       });
 
       // If originated from a draft, approve the draft

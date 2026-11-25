@@ -6,6 +6,8 @@ import Course from '@/models/Course';
 import CentersDirectory, { CenterItem } from '@/components/centers/CentersDirectory';
 import { CentersSkeletonGrid, Skeleton } from '@/components/ui/skeleton';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'المراكز والمعاهد التدريبية الشريكة | تلاقي',
   description: 'دليل المراكز والمعاهد والمنظمات التدريبية المعتمدة في إدلب والشمال السوري.',

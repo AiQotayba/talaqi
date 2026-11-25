@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 
 // Target URIs
 const ENV_URI = process.env.MONGODB_URI;
-const LOCAL_URI = 'mongodb://127.0.0.1:27017/dolean';
+const LOCAL_URI = 'mongodb://127.0.0.1:27017/talaqi';
 
 export const ORGANIZATIONS_DATA = [
   {
@@ -1778,7 +1778,7 @@ async function seed() {
   // 5. Seed / Upsert Default Admin User
   console.log('\n👤 جاري التأكد من حساب مدير النظام (Admin User)...');
   const userCollection = db.collection('users');
-  const adminEmail = 'admin@dolean.com';
+  const adminEmail = 'admin@talaqi.com';
   const adminPassword = 'AdminPassword123';
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 

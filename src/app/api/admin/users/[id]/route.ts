@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/User';
 import UserDetails from '@/models/UserDetails';
@@ -10,8 +11,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
+    if (!id || !mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ message: 'المستخدم غير موجود' }, { status: 404 });
+    }
+
     await connectToDatabase();
-    const user = await User.findById(id).select('-password').lean();
+    const user = await User.findById(id)
+      .select('-password -resetPasswordToken -resetPasswordExpires')
+      .lean();
     if (!user) return NextResponse.json({ message: 'المستخدم غير موجود' }, { status: 404 });
 
     const uPhoneClean = (user.phone || '').replace(/[^0-9]/g, '');
@@ -42,6 +49,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
+    if (!id || !mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ message: 'المستخدم غير موجود' }, { status: 404 });
+    }
+
     await connectToDatabase();
     const user = await User.findByIdAndUpdate(id, { deleteState: true });
     if (!user) return NextResponse.json({ message: 'المستخدم غير موجود' }, { status: 404 });

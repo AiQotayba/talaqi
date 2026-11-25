@@ -55,19 +55,26 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Format birth year if provided
+    // Format birth year if provided (safe parsing for year number or ISO date string)
     let births = 2000;
-    if (rawBody.births) {
-      const birthDate = new Date(rawBody.births);
-      if (!isNaN(birthDate.getTime())) {
-        const formatted = birthDate.toJSON().split('T')[0].replaceAll('-', '');
-        births = Number(formatted) || 2000;
-      } else {
-        births = Number(rawBody.births) || 2000;
+    if (rawBody.births !== undefined && rawBody.births !== null && rawBody.births !== '') {
+      if (typeof rawBody.births === 'number' && rawBody.births >= 1940 && rawBody.births <= 2026) {
+        births = Math.floor(rawBody.births);
+      } else if (typeof rawBody.births === 'string') {
+        const trimmed = rawBody.births.trim();
+        const asInt = parseInt(trimmed, 10);
+        if (/^\d{4}$/.test(trimmed) && asInt >= 1940 && asInt <= 2026) {
+          births = asInt;
+        } else {
+          const parsedDate = new Date(trimmed);
+          if (!isNaN(parsedDate.getTime())) {
+            const yr = parsedDate.getFullYear();
+            if (yr >= 1940 && yr <= 2026) {
+              births = yr;
+            }
+          }
+        }
       }
-    }
-    if (births < 1940 || births > 2026) {
-      births = 2000;
     }
 
     const district = typeof rawBody.District === 'string' ? rawBody.District.trim().slice(0, 50) : 'إدلب';
